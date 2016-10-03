@@ -1,8 +1,8 @@
 {
   "name": "simple-react-router",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
-  "main": "index.js",
+  "main": "build/index.js",
   "scripts": {
     "test": "mocha test/.setup.js test/**/*-test.js",
     "build": "babel index.js -d build",
