@@ -17,7 +17,7 @@ export default class SimpleReactRouter extends Component {
     this.rerender = this.rerender.bind(this)
     this.redirectTo = this.redirectTo.bind(this)
     this.locationToHref = this.locationToHref.bind(this)
-    this.update()
+    this.update(props)
     addEventListener('popstate', this.rerender)
   }
 
@@ -25,24 +25,29 @@ export default class SimpleReactRouter extends Component {
     removeEventListener('popstate', this.rerender)
   }
 
+  componentWillReceiveProps(nextProps){
+    this.update(nextProps)
+  }
+
   rerender(event){
-    this.update()
+    this.update(this.props)
     this.forceUpdate()
   }
 
-  update() {
+  update(props) {
     this.location = {
       pathname: location.pathname,
       search: location.search,
       query: searchToObject(location.search),
       hash: location.hash,
     }
-    this.route = this.router(this.location)
+    this.route = this.router(props, this.location)
   }
 
-  router(location){
+  router(props, location){
     const routes = new PathnameRouter
-    this.getRoutes((path, Component) => routes.map(path, {Component}))
+    const map = (path, Component) => routes.map(path, {Component})
+    this.getRoutes.call(null, map, props)
     return routes.resolve(location)
   }
 
