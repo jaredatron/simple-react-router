@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import querystring from 'querystring'
 import PathnameRouter from 'pathname-router'
+import Link from './Link'
 
 export default class SimpleReactRouter extends Component {
 
@@ -93,6 +94,9 @@ export default class SimpleReactRouter extends Component {
 const searchToObject = (search) => {
   return querystring.parse((search || '').replace(/^\?/, ''))
 }
+
 const objectToSearch = (object) => {
   return querystring.stringify(object)
 }
+
+export { Link, SimpleReactRouter }
