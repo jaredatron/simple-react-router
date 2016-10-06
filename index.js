@@ -13,7 +13,7 @@ export default class SimpleReactRouter extends Component {
   }
 
   constructor(props){
-    super()
+    super(props)
     this.rerender = this.rerender.bind(this)
     this.redirectTo = this.redirectTo.bind(this)
     this.locationToHref = this.locationToHref.bind(this)
