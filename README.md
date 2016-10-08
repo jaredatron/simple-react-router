@@ -1,5 +1,11 @@
 # simple-react-router
 
+## Why
+
+React Router is too heavy weight. Most of my projects just need a dead simple top level router.
+
+This is that router.
+
 ## Usage
 
 #### Static Routes
