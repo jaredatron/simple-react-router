@@ -14,11 +14,25 @@ export default class SimpleReactRouter extends Component {
 
   constructor(props){
     super(props)
+    // console.log('Router initialized with', props)
+    if (process.env.NODE_ENV === 'development'){
+      if (this.routes && this.getRoutes)
+        throw new Error('you cannot define both routes() and getRoutes()')
+      if (!this.routes && !this.getRoutes)
+        throw new Error('you must define either routes() or getRoutes()')
+    }
     this.rerender = this.rerender.bind(this)
     this.redirectTo = this.redirectTo.bind(this)
     this.locationToHref = this.locationToHref.bind(this)
-    this.update(props)
+
+    if (this.routes){
+      this.getRoute = createStaticRouter(this.routes)
+    }else{
+      this.getRoute = createDynamicRouter(this.getRoutes)
+    }
+
     addEventListener('popstate', this.rerender)
+    this.update(props)
   }
 
   componentWillUnmount(){
@@ -41,20 +55,7 @@ export default class SimpleReactRouter extends Component {
       query: searchToObject(location.search),
       hash: location.hash,
     }
-    this.route = this.router(props, this.location)
-  }
-
-  router(props, location){
-    const routes = new PathnameRouter
-    const map = (path, Component) => routes.map(path, {Component})
-    this.getRoutes.call(null, map, props)
-    return routes.resolve(location)
-  }
-
-  getRoutes(map){
-    map('*path', (props) =>
-      React.createElement('span', null, 'you must define getRoutes() in your subclass of SimpleReactRouter')
-    )
+    this.route = this.getRoute(this.location, props)
   }
 
   getChildContext() {
@@ -92,8 +93,25 @@ export default class SimpleReactRouter extends Component {
     const { params, location } = this.route
     const { Component } = params
     const props = Object.assign({}, this.props, { params, location })
+    // console.log(`--> Router.render ${Component.name}`, props)
     return React.createElement(Component, props)
   }
+}
+
+const createStaticRouter = (mapper) => {
+  const router = createRouter(mapper)
+  return (location) => router.resolve(location)
+}
+
+const createDynamicRouter = (mapper) =>
+  (location, props) =>
+    createRouter(mapper, props).resolve(location)
+
+const createRouter = (mapper, props) => {
+  const router = new PathnameRouter
+  const map = (path, Component) => router.map(path, {Component})
+  mapper.call(null, map, props)
+  return router
 }
 
 const searchToObject = (search) => {

@@ -5,7 +5,8 @@
   "main": "build/index.js",
   "scripts": {
     "test": "mocha test/.setup.js test/**/*-test.js",
-    "build": "babel index.js Link.js -d build",
+    "build": "babel src -d build",
+    "build:watch": "npm build -- --watch",
     "postinstall": "npm run build"
   },
   "author": "Jared Grippe <jared@deadlyicon.com>",
@@ -24,7 +25,8 @@
     "jsdom": "^9.6.0",
     "mocha": "^3.1.0",
     "react": "^15.3.2",
-    "react-addons-test-utils": "^15.3.2"
+    "react-addons-test-utils": "^15.3.2",
+    "react-dom": "^15.3.2"
   },
   "peerDependencies": {
     "react": "^15.3.2"
