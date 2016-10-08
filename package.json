@@ -33,6 +33,6 @@
     "react": "^15.3.2"
   },
   "dependencies": {
-    "pathname-router": "0.0.2"
+    "pathname-router": "0.0.3"
   }
 }

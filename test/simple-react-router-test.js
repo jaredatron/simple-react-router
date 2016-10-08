@@ -45,7 +45,7 @@ const whenAt = (path, block) => {
 }
 
 const itShouldRouteTo = (expectedRoute) => {
-  it('the routes should equal {...}', () => {
+  it(`should route to ${JSON.stringify(expectedRoute)}`, () => {
     const route = mount(subject).node.route
     expect(route).to.eql(expectedRoute)
   })
@@ -54,8 +54,8 @@ const itShouldRouteTo = (expectedRoute) => {
 const itShouldRender = (Component) => {
   it(`should render <${Component.name} />`, () => {
     const mountedRouter = mount(subject)
-    const {params, location} = mountedRouter.node.route
-    const props = Object.assign({}, mountedRouter.node.props, {params, location})
+    const props = Object.assign({}, mountedRouter.node.props)
+    props.route = mountedRouter.node.route
     const expectedHTML = render(<Component {...props} />).html()
     expect(render(subject).html()).to.eql(expectedHTML)
   })
@@ -64,7 +64,7 @@ const itShouldRender = (Component) => {
 
 
 
-const NotFound      = (props) => <div>NotFound {props.params.path}</div>
+const NotFound      = (props) => <div>NotFound {props.route.params.path}</div>
 const HomePage      = (props) => <div>HomePage</div>
 const SignupPage    = (props) => <div>SignupPage</div>
 const LoginPage     = (props) => <div>LoginPage</div>
@@ -84,7 +84,7 @@ export default class StaticRouter extends SimpleReactRouter {
     map('/posts/new',          NewPostPage)
     map('/posts/:postId',      PostShowPage)
     map('/posts/:postId/edit', PostEditPage)
-    map('*path',               NotFound) // catchall route
+    map('/:path*',             NotFound) // catchall route
   }
 }
 
@@ -96,17 +96,14 @@ describe('StaticRouter', () => {
   itShouldBeAReactComponent(StaticRouter)
 
   whenAt('/', () => {
-
     itShouldRouteTo({
+      pathname: '/',
+      query: {},
+      search: null,
+      hash: null,
       params: {
         Component: HomePage,
       },
-      location: {
-        pathname: '/',
-        query: {},
-        search: null,
-        hash: null,
-      }
     })
 
     itShouldRender(HomePage)
@@ -116,15 +113,13 @@ describe('StaticRouter', () => {
   whenAt('/signup', () => {
 
     itShouldRouteTo({
+      pathname: '/signup',
+      query: {},
+      search: null,
+      hash: null,
       params: {
         Component: SignupPage,
       },
-      location: {
-        pathname: '/signup',
-        query: {},
-        search: null,
-        hash: null,
-      }
     })
 
     itShouldRender(SignupPage)
@@ -134,17 +129,15 @@ describe('StaticRouter', () => {
   whenAt('/login?return=/about#pricing', () => {
 
     itShouldRouteTo({
+      pathname: '/login',
+      query: {
+        "return": "/about"
+      },
+      search: "?return=/about",
+      hash: "#pricing",
       params: {
         Component: LoginPage,
       },
-      location: {
-        pathname: '/login',
-        query: {
-          "return": "/about"
-        },
-        search: "?return=/about",
-        hash: "#pricing",
-      }
     })
 
     itShouldRender(LoginPage)
@@ -154,16 +147,14 @@ describe('StaticRouter', () => {
   whenAt('/posts/42', () => {
 
     itShouldRouteTo({
+      pathname: '/posts/42',
+      query: {},
+      search: null,
+      hash: null,
       params: {
         Component: PostShowPage,
         postId: "42",
       },
-      location: {
-        pathname: '/posts/42',
-        query: {},
-        search: null,
-        hash: null,
-      }
     })
 
     itShouldRender(PostShowPage)
@@ -173,16 +164,14 @@ describe('StaticRouter', () => {
   whenAt('/posts/88/edit', () => {
 
     itShouldRouteTo({
+      pathname: '/posts/88/edit',
+      query: {},
+      search: null,
+      hash: null,
       params: {
         Component: PostEditPage,
         postId: "88",
       },
-      location: {
-        pathname: '/posts/88/edit',
-        query: {},
-        search: null,
-        hash: null,
-      }
     })
 
     itShouldRender(PostEditPage)
@@ -192,16 +181,14 @@ describe('StaticRouter', () => {
   whenAt('/some/unknown/path', () => {
 
     itShouldRouteTo({
+      pathname: '/some/unknown/path',
+      query: {},
+      search: null,
+      hash: null,
       params: {
         Component: NotFound,
         path: 'some/unknown/path',
       },
-      location: {
-        pathname: '/some/unknown/path',
-        query: {},
-        search: null,
-        hash: null,
-      }
     })
 
     itShouldRender(NotFound)
@@ -234,7 +221,7 @@ class DynamicRouter extends SimpleReactRouter {
     }
     map('/posts',         PostIndexPage)
     map('/posts/:postId', PostShowPage)
-    map('*path',          NotFound) // catchall route
+    map('/:path*',        NotFound) // catchall route
   }
 }
 
@@ -244,19 +231,16 @@ describe('DynamicRouter', () => {
   context('when not logged in', () => {
     setSubject(() => <DynamicRouter loggedIn={false} /> )
 
-
     whenAt('/', () => {
 
       itShouldRouteTo({
+        pathname: '/',
+        query: {},
+        search: null,
+        hash: null,
         params: {
           Component: LoggedOutHomePage,
         },
-        location: {
-          pathname: '/',
-          query: {},
-          search: null,
-          hash: null,
-        }
       })
 
       itShouldRender(LoggedOutHomePage)
@@ -266,15 +250,13 @@ describe('DynamicRouter', () => {
     whenAt('/signup', () => {
 
       itShouldRouteTo({
+        pathname: '/signup',
+        query: {},
+        search: null,
+        hash: null,
         params: {
           Component: SignupPage,
         },
-        location: {
-          pathname: '/signup',
-          query: {},
-          search: null,
-          hash: null,
-        }
       })
 
       itShouldRender(SignupPage)
@@ -284,15 +266,13 @@ describe('DynamicRouter', () => {
     whenAt('/login', () => {
 
       itShouldRouteTo({
+        pathname: '/login',
+        query: {},
+        search: null,
+        hash: null,
         params: {
           Component: LoginPage,
         },
-        location: {
-          pathname: '/login',
-          query: {},
-          search: null,
-          hash: null,
-        }
       })
 
       itShouldRender(LoginPage)
@@ -302,15 +282,13 @@ describe('DynamicRouter', () => {
     whenAt('/posts', () => {
 
       itShouldRouteTo({
+        pathname: '/posts',
+        query: {},
+        search: null,
+        hash: null,
         params: {
           Component: PostIndexPage,
         },
-        location: {
-          pathname: '/posts',
-          query: {},
-          search: null,
-          hash: null,
-        }
       })
 
       itShouldRender(PostIndexPage)
@@ -320,16 +298,14 @@ describe('DynamicRouter', () => {
     whenAt('/posts/88/edit', () => {
 
       itShouldRouteTo({
+        pathname: '/posts/88/edit',
+        query: {},
+        search: null,
+        hash: null,
         params: {
           Component: NotFound,
           path: 'posts/88/edit'
         },
-        location: {
-          pathname: '/posts/88/edit',
-          query: {},
-          search: null,
-          hash: null,
-        }
       })
 
       itShouldRender(NotFound)
@@ -340,16 +316,14 @@ describe('DynamicRouter', () => {
     whenAt('/posts/42', () => {
 
       itShouldRouteTo({
+        pathname: '/posts/42',
+        query: {},
+        search: null,
+        hash: null,
         params: {
           Component: PostShowPage,
           postId: "42",
         },
-        location: {
-          pathname: '/posts/42',
-          query: {},
-          search: null,
-          hash: null,
-        }
       })
 
       itShouldRender(PostShowPage)
@@ -360,16 +334,14 @@ describe('DynamicRouter', () => {
     whenAt('/some/unknown/path', () => {
 
       itShouldRouteTo({
+        pathname: '/some/unknown/path',
+        query: {},
+        search: null,
+        hash: null,
         params: {
           Component: NotFound,
           path: 'some/unknown/path',
         },
-        location: {
-          pathname: '/some/unknown/path',
-          query: {},
-          search: null,
-          hash: null,
-        }
       })
 
       itShouldRender(NotFound)
@@ -384,15 +356,13 @@ describe('DynamicRouter', () => {
     whenAt('/', () => {
 
       itShouldRouteTo({
+        pathname: '/',
+        query: {},
+        search: null,
+        hash: null,
         params: {
           Component: LoggedInHomePage,
         },
-        location: {
-          pathname: '/',
-          query: {},
-          search: null,
-          hash: null,
-        }
       })
 
       itShouldRender(LoggedInHomePage)
@@ -402,15 +372,13 @@ describe('DynamicRouter', () => {
     whenAt('/signup', () => {
 
       itShouldRouteTo({
+        pathname: '/signup',
+        query: {},
+        search: null,
+        hash: null,
         params: {
           Component: NotFound,
-          path: 'signup'
-        },
-        location: {
-          pathname: '/signup',
-          query: {},
-          search: null,
-          hash: null,
+          path: 'signup',
         }
       })
 
@@ -421,16 +389,14 @@ describe('DynamicRouter', () => {
     whenAt('/login', () => {
 
       itShouldRouteTo({
+        pathname: '/login',
+        query: {},
+        search: null,
+        hash: null,
         params: {
           Component: NotFound,
           path: 'login'
         },
-        location: {
-          pathname: '/login',
-          query: {},
-          search: null,
-          hash: null,
-        }
       })
 
       itShouldRender(NotFound)
@@ -440,15 +406,13 @@ describe('DynamicRouter', () => {
     whenAt('/posts', () => {
 
       itShouldRouteTo({
+        pathname: '/posts',
+        query: {},
+        search: null,
+        hash: null,
         params: {
           Component: PostIndexPage,
         },
-        location: {
-          pathname: '/posts',
-          query: {},
-          search: null,
-          hash: null,
-        }
       })
 
       itShouldRender(PostIndexPage)
@@ -458,16 +422,14 @@ describe('DynamicRouter', () => {
     whenAt('/posts/88/edit', () => {
 
       itShouldRouteTo({
+        pathname: '/posts/88/edit',
+        query: {},
+        search: null,
+        hash: null,
         params: {
           Component: PostEditPage,
           postId: '88'
         },
-        location: {
-          pathname: '/posts/88/edit',
-          query: {},
-          search: null,
-          hash: null,
-        }
       })
 
       itShouldRender(PostEditPage)
@@ -478,16 +440,14 @@ describe('DynamicRouter', () => {
     whenAt('/posts/42', () => {
 
       itShouldRouteTo({
+        pathname: '/posts/42',
+        query: {},
+        search: null,
+        hash: null,
         params: {
           Component: PostShowPage,
           postId: "42",
         },
-        location: {
-          pathname: '/posts/42',
-          query: {},
-          search: null,
-          hash: null,
-        }
       })
 
       itShouldRender(PostShowPage)
@@ -498,16 +458,14 @@ describe('DynamicRouter', () => {
     whenAt('/some/unknown/path', () => {
 
       itShouldRouteTo({
+        pathname: '/some/unknown/path',
+        query: {},
+        search: null,
+        hash: null,
         params: {
           Component: NotFound,
           path: 'some/unknown/path',
         },
-        location: {
-          pathname: '/some/unknown/path',
-          query: {},
-          search: null,
-          hash: null,
-        }
       })
 
       itShouldRender(NotFound)

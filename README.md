@@ -37,7 +37,7 @@ export default class Router extends SimpleReactRouter {
     map('/posts/new',          NewPostPage)
     map('/posts/:postId',      PostShowPage)
     map('/posts/:postId/edit', PostEditPage)
-    map('*path',               NotFound) // catchall route
+    map('/:path*',             NotFound) // catchall route
   }
 }
 ```
@@ -78,7 +78,7 @@ export default class Router extends SimpleReactRouter {
     }
     map('/posts',         PostIndexPage)
     map('/posts/:postId', PostShowPage)
-    map('*path',          NotFound) // catchall route
+    map('/:path*',        NotFound) // catchall route
   }
 }
 ```

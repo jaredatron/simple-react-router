@@ -6,7 +6,6 @@ import Link from './Link'
 export default class SimpleReactRouter extends Component {
 
   static childContextTypes = {
-    location:       React.PropTypes.object.isRequired,
     route:          React.PropTypes.object.isRequired,
     redirectTo:     React.PropTypes.func,
     locationToHref: React.PropTypes.func,
@@ -49,18 +48,17 @@ export default class SimpleReactRouter extends Component {
   }
 
   update(props) {
-    this.location = {
+    this.route = {
       pathname: location.pathname,
       search: location.search,
       query: searchToObject(location.search),
       hash: location.hash,
     }
-    this.route = this.getRoute(this.location, props)
+    this.route.params = this.getRoute(this.route, props)
   }
 
   getChildContext() {
     return {
-      location: this.location,
       route: this.route,
       redirectTo: this.redirectTo,
       locationToHref: this.locationToHref,
@@ -90,22 +88,21 @@ export default class SimpleReactRouter extends Component {
     if (!this.route){
       return React.createElement('span', null, 'No Route Found')
     }
-    const { params, location } = this.route
-    const { Component } = params
-    const props = Object.assign({}, this.props, { params, location })
-    // console.log(`--> Router.render ${Component.name}`, props)
+    const { Component } = this.route.params
+    const props = Object.assign({}, this.props)
+    props.route = this.route
     return React.createElement(Component, props)
   }
 }
 
 const createStaticRouter = (mapper) => {
   const router = createRouter(mapper)
-  return (location) => router.resolve(location)
+  return (location) => router.resolve(location.pathname)
 }
 
 const createDynamicRouter = (mapper) =>
   (location, props) =>
-    createRouter(mapper, props).resolve(location)
+    createRouter(mapper, props).resolve(location.pathname)
 
 const createRouter = (mapper, props) => {
   const router = new PathnameRouter
