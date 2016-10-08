@@ -1,7 +1,8 @@
 {
   "name": "simple-react-router",
-  "version": "0.0.6",
-  "description": "",
+  "version": "0.0.7",
+  "description": "A Simple Router for React",
+  "repository": "https://github.com/deadlyicon/simple-react-router",
   "main": "build/index.js",
   "scripts": {
     "test": "mocha test/.setup.js test/**/*-test.js",
