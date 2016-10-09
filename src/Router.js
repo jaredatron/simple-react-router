@@ -1,72 +1,83 @@
 import React, { Component } from 'react'
-import querystring from 'querystring'
 import PathnameRouter from 'pathname-router'
-import Link from './Link'
+import Location from './Location'
 
 export default class SimpleReactRouter extends Component {
 
   static childContextTypes = {
-    route:          React.PropTypes.object.isRequired,
-    redirectTo:     React.PropTypes.func,
-    locationToHref: React.PropTypes.func,
+    location:   React.PropTypes.object.isRequired,
+    redirectTo: React.PropTypes.func.isRequired,
   }
 
   constructor(props){
     super(props)
-    // console.log('Router initialized with', props)
     if (process.env.NODE_ENV === 'development'){
       if (this.routes && this.getRoutes)
         throw new Error('you cannot define both routes() and getRoutes()')
       if (!this.routes && !this.getRoutes)
         throw new Error('you must define either routes() or getRoutes()')
     }
-    this.rerender = this.rerender.bind(this)
-    this.redirectTo = this.redirectTo.bind(this)
-    this.locationToHref = this.locationToHref.bind(this)
 
-    if (this.routes){
-      this.getRoute = createStaticRouter(this.routes)
-    }else{
-      this.getRoute = createDynamicRouter(this.getRoutes)
-    }
-
-    addEventListener('popstate', this.rerender)
-    this.update(props)
+    this.router = new Router({
+      component: this,
+      staticRoutes: !!this.routes,
+      getRoutes: this.routes || this.getRoutes
+    })
   }
 
   componentWillUnmount(){
-    removeEventListener('popstate', this.rerender)
+    this.router.unmount()
   }
 
   componentWillReceiveProps(nextProps){
-    this.update(nextProps)
-  }
-
-  rerender(event){
-    this.update(this.props)
-    this.forceUpdate()
-  }
-
-  update(props) {
-    this.route = {
-      pathname: location.pathname,
-      search: location.search,
-      query: searchToObject(location.search),
-      hash: location.hash,
-    }
-    this.route.params = this.getRoute(this.route, props)
+    this.router.update(nextProps)
   }
 
   getChildContext() {
     return {
-      route: this.route,
-      redirectTo: this.redirectTo,
-      locationToHref: this.locationToHref,
+      location: this.router.location,
+      redirectTo: this.router.redirectTo,
     }
   }
 
+  render(){
+    const { router } = this
+    if (!router.location.params){
+      return React.createElement('span', null, 'No Route Found')
+    }
+    const { Component } = router.location.params
+    const props = Object.assign({}, this.props)
+    props.location = router.location
+    return React.createElement(Component, props)
+  }
+}
+
+
+
+class Router {
+  constructor({component, staticRoutes, getRoutes}){
+    this.component = component
+    this.resolve = staticRoutes ?
+      staticResolver(getRoutes) :
+      dynamicResolver(getRoutes)
+    this.rerender = this.rerender.bind(this)
+    this.redirectTo = this.redirectTo.bind(this)
+    addEventListener('popstate', this.rerender)
+    this.update(component.props)
+  }
+
+  update(props=this.component.props){
+    this.location = new Location(location)
+    this.location.params = this.resolve(this.location, props)
+    this.component.location = this.location
+  }
+
+  rerender(){
+    this.update()
+    this.component.forceUpdate()
+  }
+
   redirectTo(href, replace){
-    href = this.locationToHref(href)
     if (replace){
       history.replaceState(null, document.title, href)
     }else{
@@ -75,48 +86,25 @@ export default class SimpleReactRouter extends Component {
     this.rerender()
   }
 
-  locationToHref(location) {
-    if (!location || typeof location === 'string') return location
-    let href = location.pathname || this.location.pathname
-    let query = location.query
-    if (typeof query === 'object') query = objectToSearch(query)
-    if (query) href += '?'+query
-    return href
-  }
-
-  render(){
-    if (!this.route){
-      return React.createElement('span', null, 'No Route Found')
-    }
-    const { Component } = this.route.params
-    const props = Object.assign({}, this.props)
-    props.route = this.route
-    return React.createElement(Component, props)
+  unmount(){
+    removeEventListener('popstate', this.rerender)
   }
 }
 
-const createStaticRouter = (mapper) => {
-  const router = createRouter(mapper)
+const staticResolver = (mapper) => {
+  const router = instantiatePathnameRouter(mapper)
   return (location) => router.resolve(location.pathname)
 }
 
-const createDynamicRouter = (mapper) =>
-  (location, props) =>
-    createRouter(mapper, props).resolve(location.pathname)
+const dynamicResolver = (mapper) => {
+  return (location, props) =>
+    instantiatePathnameRouter(mapper, props).resolve(location.pathname)
+}
 
-const createRouter = (mapper, props) => {
+const instantiatePathnameRouter = (mapper, props) => {
   const router = new PathnameRouter
-  const map = (path, Component) => router.map(path, {Component})
+  const map = (path, Component, params={}) =>
+    router.map(path, {Component, ...params})
   mapper.call(null, map, props)
   return router
 }
-
-const searchToObject = (search) => {
-  return querystring.parse((search || '').replace(/^\?/, ''))
-}
-
-const objectToSearch = (object) => {
-  return querystring.stringify(object)
-}
-
-export { Link, SimpleReactRouter }

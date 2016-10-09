@@ -3,8 +3,8 @@ import React, { Component } from 'react'
 class Link extends Component {
 
   static contextTypes = {
-    redirectTo:     React.PropTypes.func,
-    locationToHref: React.PropTypes.func,
+    redirectTo: React.PropTypes.func.isRequired,
+    location:   React.PropTypes.object.isRequired,
   }
 
   static propTypes = {
@@ -35,12 +35,11 @@ class Link extends Component {
       event.preventDefault()
       this.context.redirectTo(href, !!this.props.replace)
     }
-
   }
 
   render(){
     const props = Object.assign({}, this.props)
-    props.href = props.href || this.context.locationToHref(props.to) || ''
+    props.href = props.href || props.to || ''
     props.onClick = this.onClick
     return <a ref="link" {...props}>{props.children}</a>
   }
