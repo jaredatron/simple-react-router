@@ -63,10 +63,11 @@ import PostShowPage from './components/PostShowPage'
 import PostEditPage from './components/PostEditPage'
 
 export default class Router extends SimpleReactRouter {
-  getRoutes(map, props){
+  getRoutes({map, props, redirectTo}){
     const { loggedIn } = props
     if (loggedIn){
       map('/',                   LoggedInHomePage)
+      map('/signup', redirecTo('/'))
       map('/logout',             LogoutPage)
       map('/posts/new',          NewPostPage)
       map('/posts/:postId/edit', PostEditPage)
@@ -82,7 +83,19 @@ export default class Router extends SimpleReactRouter {
 }
 ```
 
-# Path Expressions
+## Path Expressions
 
 The route expressions are parsed with [path-to-regexp](https://github.com/pillarjs/path-to-regexp)
 via [pathname-router](https://github.com/deadlyicon/pathname-router)
+
+
+## Links
+
+
+```js
+import { Link } from 'simple-react-router'
+
+<Link href="/local/path">Home</Link>
+<Link href="http://external.com/link">Home</Link>
+
+```

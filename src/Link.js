@@ -39,7 +39,7 @@ class Link extends Component {
 
   render(){
     const props = Object.assign({}, this.props)
-    props.href = props.href || props.to || ''
+    props.href = props.href || ''
     props.onClick = this.onClick
     return <a ref="link" {...props}>{props.children}</a>
   }
