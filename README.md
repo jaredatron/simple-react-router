@@ -41,7 +41,6 @@ export default class Router extends SimpleReactRouter {
   }
 }
 ```
-The route exression syntax is based on [backbone.js](http://backbonejs.org/#Router-route). If anything doesnt work as expected please [create and issue here](https://github.com/deadlyicon/simple-react-router/issues).
 
 #### Dynamic Routes
 
@@ -83,3 +82,7 @@ export default class Router extends SimpleReactRouter {
 }
 ```
 
+# Path Expressions
+
+The route expressions are parsed with [path-to-regexp](https://github.com/pillarjs/path-to-regexp)
+via [pathname-router](https://github.com/deadlyicon/pathname-router)
