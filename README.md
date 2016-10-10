@@ -2,9 +2,7 @@
 
 ## Why
 
-React Router is too heavy weight. Most of my projects just need a dead simple top level router.
-
-This is that router.
+React Router is too complex. Most of my projects just need a simple top level router.
 
 ## Usage
 
