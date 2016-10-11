@@ -1,5 +1,7 @@
 # simple-react-router
 
+[![Join the chat at https://gitter.im/simple-react-router/Lobby](https://badges.gitter.im/simple-react-router/Lobby.svg)](https://gitter.im/simple-react-router/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ## Why
 
 React Router is too complex. Most of my projects just need a simple top level router.
