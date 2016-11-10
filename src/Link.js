@@ -29,9 +29,9 @@ class Link extends Component {
       this.props.onClick(event)
     }
 
-    if (event.defaultPrevented) return;
+    if (event.isDefaultPrevented() || event.isPropagationStopped()) return
 
-    if (href.startsWith(location.origin)){
+    if (!event.ctrlKey && !event.metaKey && !event.shiftKey && href.startsWith(location.origin)){
       event.preventDefault()
       this.context.redirectTo(href, !!this.props.replace)
     }
