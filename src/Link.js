@@ -1,21 +1,26 @@
-import React, { Component } from 'react'
+import React, { Component, PropTypes } from 'react'
 
 class Link extends Component {
 
   static contextTypes = {
-    redirectTo: React.PropTypes.func.isRequired,
-    location:   React.PropTypes.object.isRequired,
-  }
+    redirectTo: PropTypes.func.isRequired,
+    location:   PropTypes.object.isRequired,
+  };
 
   static propTypes = {
-    to:      React.PropTypes.oneOfType([
-      React.PropTypes.string,
-      React.PropTypes.object,
+    to: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.object,
     ]),
-    href:    React.PropTypes.string,
-    path:    React.PropTypes.string,
-    onClick: React.PropTypes.func,
-  }
+    href: PropTypes.string,
+    path: PropTypes.string,
+    onClick: PropTypes.func,
+    externalLink: PropTypes.bool,
+  };
+
+  static defaultProps = {
+    externalLink: false,
+  };
 
   constructor(props) {
     super(props);
@@ -31,7 +36,7 @@ class Link extends Component {
 
     if (event.isDefaultPrevented() || event.isPropagationStopped()) return
 
-    if (!event.ctrlKey && !event.metaKey && !event.shiftKey && href.startsWith(location.origin)){
+    if (!this.props.externalLink && !event.ctrlKey && !event.metaKey && !event.shiftKey && href.startsWith(location.origin)){
       event.preventDefault()
       this.context.redirectTo(href, !!this.props.replace)
     }
