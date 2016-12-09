@@ -44,6 +44,7 @@ class Link extends Component {
 
   render(){
     const props = Object.assign({}, this.props)
+    delete props.externalLink
     props.href = props.href || ''
     props.onClick = this.onClick
     return <a ref="link" {...props}>{props.children}</a>
