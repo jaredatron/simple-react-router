@@ -1,9 +1,15 @@
 {
   "name": "simple-react-router",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "A Simple Router for React",
   "repository": "https://github.com/deadlyicon/simple-react-router",
   "main": "build/index.js",
+  "files": [
+    "build/index.js",
+    "build/Link.js",
+    "build/Location.js",
+    "build/Router.js"
+  ],
   "scripts": {
     "test": "mocha test/.setup.js test/**/*-test.js",
     "build": "babel src -d build",
@@ -33,6 +39,6 @@
     "react": "^15.3.2"
   },
   "dependencies": {
-    "pathname-router": "0.0.3"
+    "pathname-router": "0.0.5"
   }
 }
