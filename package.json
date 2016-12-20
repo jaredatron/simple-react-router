@@ -1,6 +1,6 @@
 {
   "name": "simple-react-router",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "A Simple Router for React",
   "repository": "https://github.com/deadlyicon/simple-react-router",
   "main": "build/index.js",
@@ -8,7 +8,7 @@
     "test": "mocha test/.setup.js test/**/*-test.js",
     "build": "babel src -d build",
     "build:watch": "npm build -- --watch",
-    "postinstall": "npm run build"
+    "prepublish": "npm run build"
   },
   "author": "Jared Grippe <jared@deadlyicon.com>",
   "license": "MIT",
