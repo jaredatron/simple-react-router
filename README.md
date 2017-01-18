@@ -63,7 +63,7 @@ import PostShowPage from './components/PostShowPage'
 import PostEditPage from './components/PostEditPage'
 
 export default class Router extends SimpleReactRouter {
-  getRoutes({map, props, redirectTo}){
+  getRoutes(map, props, redirectTo){
     const { loggedIn } = props
     if (loggedIn){
       map('/',                   LoggedInHomePage)
