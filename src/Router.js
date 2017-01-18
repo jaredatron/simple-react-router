@@ -58,8 +58,8 @@ class Router {
   constructor({component, staticRoutes, getRoutes}){
     this.component = component
     this.resolve = staticRoutes ?
-      staticResolver(getRoutes) :
-      dynamicResolver(getRoutes)
+      this.staticResolver(getRoutes) :
+      this.dynamicResolver(getRoutes)
     this.rerender = this.rerender.bind(this)
     this.redirectTo = this.redirectTo.bind(this)
     addEventListener('popstate', this.rerender)
@@ -89,22 +89,23 @@ class Router {
   unmount(){
     removeEventListener('popstate', this.rerender)
   }
-}
 
-const staticResolver = (mapper) => {
-  const router = instantiatePathnameRouter(mapper)
-  return (location) => router.resolve(location.pathname)
-}
+  staticResolver(mapper){
+    const router = this.instantiatePathnameRouter(mapper)
+    return (location) => router.resolve(location.pathname)
+  }
 
-const dynamicResolver = (mapper) => {
-  return (location, props) =>
-    instantiatePathnameRouter(mapper, props).resolve(location.pathname)
-}
+  dynamicResolver(mapper){
+    return (location, props) =>
+      this.instantiatePathnameRouter(mapper, props).resolve(location.pathname)
+  }
 
-const instantiatePathnameRouter = (mapper, props) => {
-  const router = new PathnameRouter
-  const map = (path, Component, params={}) =>
-    router.map(path, {Component, ...params})
-  mapper.call(null, map, props)
-  return router
+  instantiatePathnameRouter(mapper, props){
+    const router = new PathnameRouter
+    const map = (path, Component, params = {}) =>
+      router.map(path, {Component, ...params})
+    mapper.call(null, map, props, this.redirectTo)
+    return router
+  }
+
 }
