@@ -67,7 +67,6 @@ export default class Router extends SimpleReactRouter {
     const { loggedIn } = props
     if (loggedIn){
       map('/',                   LoggedInHomePage)
-      map('/signup', redirecTo('/'))
       map('/logout',             LogoutPage)
       map('/posts/new',          NewPostPage)
       map('/posts/:postId/edit', PostEditPage)
