@@ -29,7 +29,7 @@ class Link extends Component {
   }
 
   onClick(event){
-    const href = this.refs.link.href
+    const href = this.refs.link.getAttribute("href");
 
     if (this.props.onClick){
       this.props.onClick(event)
@@ -48,9 +48,12 @@ class Link extends Component {
     delete props.externalLink
     props.href = props.href || ''
     props.onClick = this.onClick
-    return <a ref="link" {...props}>{props.children}</a>
+    return renderElement(props);
   }
 
+  renderElement(props) {
+    return <a ref="link" {...props}>{props.children}</a>
+  }
 }
 
 export default Link
