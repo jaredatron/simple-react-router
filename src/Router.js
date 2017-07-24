@@ -48,6 +48,7 @@ export default class SimpleReactRouter extends Component {
     const { Component } = router.location.params
     const props = Object.assign({}, this.props)
     props.location = router.location
+    props.router = router;
     return React.createElement(Component, props)
   }
 }
