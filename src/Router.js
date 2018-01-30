@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import PathnameRouter from 'pathname-router'
 import Location from './Location'
 
 export default class SimpleReactRouter extends Component {
 
   static childContextTypes = {
-    location:   React.PropTypes.object.isRequired,
-    redirectTo: React.PropTypes.func.isRequired,
+    location:   PropTypes.object.isRequired,
+    redirectTo: PropTypes.func.isRequired,
   }
 
   constructor(props){
