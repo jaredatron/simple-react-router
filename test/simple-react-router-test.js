@@ -3,7 +3,11 @@ import querystring from 'querystring'
 import chai from 'chai'
 const { expect } = chai
 import React from 'react'
-import { mount, shallow, render} from 'enzyme';
+import ReactDOM from 'react-dom'
+import Enzyme, { mount, shallow, render} from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16'
+Enzyme.configure({ adapter: new Adapter() });
+
 
 import SimpleReactRouter from '../src/Router'
 
@@ -11,12 +15,8 @@ const only = (block) => context.only('', block)
 
 const setPath = (path) => {
   let { pathname, search, hash } = URL.parse(path)
-  global.location = {
-    pathname,
-    search,
-    hash,
-    query: querystring.parse((search || '').replace(/^\?/, '')),
-  }
+  const url = "https://www.example.com"+path
+  jsdom.reconfigure({url})
 }
 
 let subject = null
@@ -45,7 +45,7 @@ const whenAt = (path, block) => {
 
 const itShouldRouteTo = (expectedRoute) => {
   it(`should route to ${JSON.stringify(expectedRoute)}`, () => {
-    const location = mount(subject).node.location
+    const { location } = mount(subject).instance().router
     expect(location).to.eql(expectedRoute)
   })
 }
@@ -53,8 +53,8 @@ const itShouldRouteTo = (expectedRoute) => {
 const itShouldRender = (Component) => {
   it(`should render <${Component.name} />`, () => {
     const mountedRouter = mount(subject)
-    const props = Object.assign({}, mountedRouter.node.props)
-    props.location = mountedRouter.node.location
+    const props = Object.assign({}, mountedRouter.instance().props)
+    props.location = mountedRouter.instance().router.location
     const expectedHTML = render(<Component {...props} />).html()
     expect(render(subject).html()).to.eql(expectedHTML)
   })
@@ -456,14 +456,11 @@ describe('DynamicRouter', () => {
 
 describe('Location', () => {
 
-  // stub history.replaceState / pushState
-
   let location
   beforeEach(() => {
     setPath('/posts/23/edit?order=desc')
     const mountPoint = mount(<StaticRouter />)
-    const router = mountPoint.node
-    location = router.location
+    location = mountPoint.instance().router.location
   })
 
   it('should', ()=> {
@@ -493,7 +490,5 @@ describe('Location', () => {
     })).to.eql('/foo/bar?order=asc')
 
   })
-
-
 
 })

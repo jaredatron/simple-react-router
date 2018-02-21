@@ -1,20 +1,23 @@
 require('babel-register')();
 
-var jsdom = require('jsdom').jsdom;
+const { JSDOM } = require('jsdom');
+const jsdom = new JSDOM('<!doctype html><html><body></body></html>');
+const { window } = jsdom;
 
-var exposedProperties = ['window', 'navigator', 'document'];
-
-global.document = jsdom('');
-global.window = document.defaultView;
-Object.keys(document.defaultView).forEach((property) => {
-  if (typeof global[property] === 'undefined') {
-    exposedProperties.push(property);
-    global[property] = document.defaultView[property];
-  }
-});
-
+global.jsdom = jsdom;
+global.window = window;
+global.document = window.document;
 global.navigator = {
-  userAgent: 'node.js'
+  userAgent: 'node.js',
 };
+
+Object.getOwnPropertyNames(window)
+  .filter(prop => typeof global[prop] === 'undefined')
+  .forEach(prop => {
+    // if (prop === 'location') return
+    Object.defineProperties(global, {
+      [prop]: Object.getOwnPropertyDescriptor(window, prop)
+    });
+  })
 
 documentRef = document;
