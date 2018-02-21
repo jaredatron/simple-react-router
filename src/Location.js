@@ -1,10 +1,12 @@
 import querystring from 'querystring'
 
 export default class Location {
-  constructor({pathname, query, hash}){
+  constructor({pathname, query, search, hash}){
     this.pathname = pathname
-    this.query = typeof query === 'string' ? searchToObject(query) : query
-    this.hash = hash
+    this.query = typeof search === 'string'
+      ? searchToObject(search)
+      : query || {}
+    this.hash = hash === "" ? null : hash
   }
 
   toString(){
@@ -14,11 +16,12 @@ export default class Location {
     return href
   }
 
-  update(location){
-    const {pathname, query, hash} = this
-    location = Object.assign({pathname, query, hash}, location)
-    location = new Location(location)
-    return location
+  update({pathname, query, hash}){
+    return new Location({
+      pathname: pathname || this.pathname,
+      query: query || this.query,
+      hash: hash || this.hash,
+    })
   }
 
   hrefFor(location) {

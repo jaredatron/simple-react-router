@@ -69,7 +69,7 @@ class Router {
   }
 
   update(props=this.component.props){
-    this.location = new Location(location)
+    this.location = new Location(window.location)
     this.location.params = this.resolve(this.location, props)
     this.component.location = this.location
   }
