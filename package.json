@@ -14,7 +14,7 @@
     "test": "mocha test/.setup.js test/**/*-test.js",
     "build": "babel src -d build",
     "build:watch": "npm build -- --watch",
-    "prepare": "npm run build"
+    "prepublishOnly": "npm run build"
   },
   "author": "Jared Grippe <jared@deadlyicon.com>",
   "license": "MIT",
