@@ -35,7 +35,7 @@ class Link extends Component {
       this.props.onClick(event)
     }
 
-    if (event.isDefaultPrevented() || event.isPropagationStopped()) return
+    if (event.defaultPrevented) return
 
     if (!this.props.externalLink && !event.ctrlKey && !event.metaKey && !event.shiftKey && href.startsWith(location.origin)){
       event.preventDefault()
