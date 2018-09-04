@@ -1,9 +1,11 @@
 import Router from './Router'
 import Link from './Link'
+import withRedirectTo from './withRedirectTo';
 
 export {
   Router,
-  Link
+  Link,
+  withRedirectTo,
 }
 
 export default Router
