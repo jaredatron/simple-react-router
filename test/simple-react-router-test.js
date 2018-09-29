@@ -498,17 +498,13 @@ describe('Location', () => {
 
 describe('Link', () => {
 
-  const PageA = (props) => <div><Link href="/relative"></Link></div>
-  const PageB = (props) => <div><Link href="https://www.example.com/absolute"></Link></div>
-  const PageC = (props) => <div><Link href="http://fark.com"></Link></div>
-  const PageD = (props) => <div><Link href="https://reddit.com"></Link></div>
-
   class LinkTestRouter extends SimpleReactRouter {
     routes(map){
-      map('/a', PageA)
-      map('/b', PageB)
-      map('/c', PageC)
-      map('/d', PageD)
+      map('/a', () => <div><Link href="/relative"></Link></div>)
+      map('/b', () => <div><Link href="https://www.example.com/absolute"></Link></div>)
+      map('/c', () => <div><Link href="http://fark.com"></Link></div>)
+      map('/d', () => <div><Link href="https://reddit.com"></Link></div>)
+      map('/e', () => <div><Link Component="button" href="/as-a-button"></Link></div>)
     }
   }
 
@@ -559,6 +555,13 @@ describe('Link', () => {
   whenAt('/d', function(){
     theLinkShouldNotPreventDefault()
   })
+
+  whenAt('/e', function(){
+    it('should be able to be rendered as a <button>', function(){
+      expect(mount(subject).find('button').type()).to.equal('button')
+    })
+  })
+
 
 
 })

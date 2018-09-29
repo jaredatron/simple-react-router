@@ -9,6 +9,7 @@ class Link extends Component {
   };
 
   static propTypes = {
+    Component: PropTypes.node.isRequired,
     to: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.object,
@@ -20,6 +21,7 @@ class Link extends Component {
   };
 
   static defaultProps = {
+    Component: 'a',
     externalLink: false,
   };
 
@@ -48,14 +50,12 @@ class Link extends Component {
 
   render(){
     const props = Object.assign({}, this.props)
+    const Component = props.Component
+    delete props.Component
     delete props.externalLink
     props.href = props.href || ''
     props.onClick = this.onClick
-    return this.renderElement(props);
-  }
-
-  renderElement(props) {
-    return <a ref={node => { this.link = node }} {...props}>{props.children}</a>
+    return <Component ref={node => { this.link = node }} {...props}>{props.children}</Component>
   }
 }
 

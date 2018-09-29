@@ -1,9 +1,5 @@
 import {Link} from './Link';
 
-class ButtonLink extends Link {
-  renderElement(props) {
-    return <button ref="link" {...props}>{props.children}</a>
-  }
+export default function ButtonLink(props){
+  return <Link Component="button" {...props} />{props.children}</Link>
 }
-
-export default ButtonLink;
