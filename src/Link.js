@@ -51,11 +51,11 @@ class Link extends Component {
     delete props.externalLink
     props.href = props.href || ''
     props.onClick = this.onClick
-    return renderElement(props);
+    return this.renderElement(props);
   }
 
   renderElement(props) {
-    return <a ref="link" {...props}>{props.children}</a>
+    return <a ref={node => { this.link = node }} {...props}>{props.children}</a>
   }
 }
 
