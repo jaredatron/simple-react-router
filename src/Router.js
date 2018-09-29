@@ -81,9 +81,9 @@ class Router {
 
   redirectTo(href, replace){
     if (replace){
-      history.replaceState(null, document.title, href)
+      window.history.replaceState(null, document.title, href)
     }else{
-      history.pushState(null, document.title, href)
+      window.history.pushState(null, document.title, href)
     }
     this.rerender()
   }

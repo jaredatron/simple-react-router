@@ -28,26 +28,21 @@ class Link extends Component {
     this.onClick = this.onClick.bind(this);
   }
 
-  isAbsoluteURL(url) {
-    return url.startsWith("http://")
-        || url.startsWith("https://");
+  isSameOrigin(){
+    const { href } = this.props
+    return !href.match(/^https?:\/\//) || href.startsWith(window.location.origin)
   }
 
   onClick(event){
-    let href = this.refs.link.getAttribute("href");
-    if (!this.isAbsoluteURL(href)) {
-      href = location.origin + href;
-    }
-
     if (this.props.onClick){
       this.props.onClick(event)
     }
 
     if (event.defaultPrevented) return
 
-    if (!this.props.externalLink && !event.ctrlKey && !event.metaKey && !event.shiftKey && href.startsWith(location.origin)){
+    if (!this.props.externalLink && !event.ctrlKey && !event.metaKey && !event.shiftKey && this.isSameOrigin()){
       event.preventDefault()
-      this.context.redirectTo(href, !!this.props.replace)
+      this.context.redirectTo(this.props.href, !!this.props.replace)
     }
   }
 

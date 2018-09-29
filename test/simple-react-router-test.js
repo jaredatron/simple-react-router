@@ -1,6 +1,8 @@
 import URL from 'url'
 import querystring from 'querystring'
 import chai from 'chai'
+import sinon from 'sinon'
+chai.use(require("sinon-chai"))
 const { expect } = chai
 import React from 'react'
 import ReactDOM from 'react-dom'
@@ -10,6 +12,7 @@ Enzyme.configure({ adapter: new Adapter() });
 
 
 import SimpleReactRouter from '../src/Router'
+import Link from '../src/Link'
 
 const only = (block) => context.only('', block)
 
@@ -73,7 +76,7 @@ const NewPostPage   = (props) => <div>NewPostPage</div>
 const PostShowPage  = (props) => <div>PostShowPage</div>
 const PostEditPage  = (props) => <div>PostEditPage</div>
 
-export default class StaticRouter extends SimpleReactRouter {
+class StaticRouter extends SimpleReactRouter {
   routes(map){
     map('/',                   HomePage)
     map('/signup',             SignupPage)
@@ -490,5 +493,72 @@ describe('Location', () => {
     })).to.eql('/foo/bar?order=asc')
 
   })
+
+})
+
+describe('Link', () => {
+
+  const PageA = (props) => <div><Link href="/relative"></Link></div>
+  const PageB = (props) => <div><Link href="https://www.example.com/absolute"></Link></div>
+  const PageC = (props) => <div><Link href="http://fark.com"></Link></div>
+  const PageD = (props) => <div><Link href="https://reddit.com"></Link></div>
+
+  class LinkTestRouter extends SimpleReactRouter {
+    routes(map){
+      map('/a', PageA)
+      map('/b', PageB)
+      map('/c', PageC)
+      map('/d', PageD)
+    }
+  }
+
+  let replaceStateSpy, pushStateSpy
+
+  const theLinkShouldUseTheRouter = () => {
+    it(`should use the router`, () => {
+      const link = mount(subject).find('a')
+      link.simulate('click')
+      expect(replaceStateSpy).to.have.not.been.called
+      expect(pushStateSpy).to.have.been.calledWith(null, '', link.props().href)
+    })
+  }
+
+  const theLinkShouldNotPreventDefault = () => {
+    it(`should use the router`, () => {
+      mount(subject).find('a').simulate('click')
+      expect(pushStateSpy).to.have.not.been.called
+      expect(replaceStateSpy).to.have.not.been.called
+    })
+  }
+
+
+  beforeEach(function(){
+    replaceStateSpy = sinon.spy(window.history, 'replaceState')
+    pushStateSpy = sinon.spy(window.history, 'pushState')
+  })
+
+  afterEach(function(){
+    replaceStateSpy.restore()
+    pushStateSpy.restore()
+  })
+
+  setSubject(() => <LinkTestRouter />)
+
+  whenAt('/a', function(){
+    theLinkShouldUseTheRouter()
+  })
+
+  whenAt('/b', function(){
+    theLinkShouldUseTheRouter()
+  })
+
+  whenAt('/c', function(){
+    theLinkShouldNotPreventDefault()
+  })
+
+  whenAt('/d', function(){
+    theLinkShouldNotPreventDefault()
+  })
+
 
 })
